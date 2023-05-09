@@ -8,5 +8,10 @@
   },
   "keywords": [],
   "author": "fredowisk",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.1.1",
+    "git-commit-msg-linter": "^5.0.4",
+    "typescript": "^5.0.4"
+  }
 }
