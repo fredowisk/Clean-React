@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES5",
+    "target": "ES6",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "node",
     "jsx": "react",
-    "rootDir": "src",
+    "rootDirs": ["src", "tests"],
     "baseUrl": "src",
     "allowJs": true,
     "skipLibCheck": true,
@@ -17,5 +17,6 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["src"]
+  "include": ["src", "tests"],
+  "exclude": ["tests/e2e/cypress"]
 }
