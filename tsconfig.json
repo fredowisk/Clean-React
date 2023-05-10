@@ -6,7 +6,7 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "jsx": "react",
-    "rootDirs": ["src", "tests"],
+    "rootDirs": ["src"],
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"]
@@ -19,6 +19,6 @@
     "isolatedModules": false,
     "noEmit": true
   },
-  "include": ["src", "tests"],
-  "exclude": ["tests/e2e/cypress"]
+  "include": ["src"],
+  // "exclude": ["tests/e2e/cypress"]
 }
