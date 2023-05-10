@@ -5,7 +5,7 @@ export enum HttpStatusCode {
   unauthorized = 401,
 }
 
-export type HttpResponse = {
+export type HttpResponse<T> = {
   statusCode: HttpStatusCode
-  body?: any
+  body?: T
 }
