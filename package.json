@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watch"
+    "test": "jest --passWithNoTests",
+    "test-watch": "npm t -- --watch",
+    "test-staged": "npm t -- --findRelatedTests",
+    "test-ci": "npm t -- --coverage"
   },
   "keywords": [],
   "author": "fredowisk",
