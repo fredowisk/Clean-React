@@ -16,7 +16,7 @@
   "author": "fredowisk",
   "license": "MIT",
   "devDependencies": {
-    "@types/faker": "^5.1.2",
+    "@types/faker": "^4.1.11",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.9.1",
     "@types/react": "^17.0.21",
@@ -33,6 +33,7 @@
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-react": "^7.21.1",
     "eslint-plugin-standard": "^5.0.0",
+    "faker": "^4.1.0",
     "git-commit-msg-linter": "^3.2.8",
     "husky": "^7.0.2",
     "jest": "^27.2.0",
