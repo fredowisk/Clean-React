@@ -14,6 +14,8 @@ HTMLInputElement
 const Input: React.FC<Props> = (props: Props) => {
   const state = useContext(Context)
 
+  const error = state[`${props.name}Error`]
+
   const setState = {
     email: state.setEmail,
     password: state.setPassword
@@ -24,11 +26,11 @@ const Input: React.FC<Props> = (props: Props) => {
   }
 
   const getStatus = (): string => {
-    return '🔴'
+    return error ? '🔴' : '🟢'
   }
 
   const getTitle = (): string => {
-    return state[`${props.name}Error`]
+    return error || 'Tudo certo!'
   }
 
   return (
