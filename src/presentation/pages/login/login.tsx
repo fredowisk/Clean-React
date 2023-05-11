@@ -13,11 +13,15 @@ import Context from '@/presentation/contexts/form/form-context'
 const Login: React.FC = () => {
   const [isLoading] = useState(false)
   const [errorMessage] = useState('')
+  const [emailError] = useState('Campo obrigatório')
+  const [passwordError] = useState('Campo obrigatório')
 
   return (
     <div className={Styles.login}>
       <LoginHeader />
-      <Context.Provider value={{ isLoading, errorMessage }}>
+      <Context.Provider
+        value={{ isLoading, errorMessage, emailError, passwordError }}
+      >
         <form className={Styles.form}>
           <h2>Login</h2>
 
@@ -27,9 +31,13 @@ const Login: React.FC = () => {
             name="password"
             placeholder="Digite sua senha"
           />
-          <Input />
 
-          <button data-testid="submit" disabled className={Styles.submit} type="submit">
+          <button
+            data-testid="submit"
+            disabled
+            className={Styles.submit}
+            type="submit"
+          >
             Entrar
           </button>
           <span className={Styles.link}>Criar conta</span>
