@@ -13,6 +13,15 @@ HTMLInputElement
 
 const Input: React.FC<Props> = (props: Props) => {
   const state = useContext(Context)
+
+  const setState = {
+    email: state.setEmail
+  }
+
+  const handleOnChange = (event: React.FocusEvent<HTMLInputElement>): void => {
+    setState[event.target.name](event.target.value)
+  }
+
   const getStatus = (): string => {
     return '🔴'
   }
@@ -23,7 +32,7 @@ const Input: React.FC<Props> = (props: Props) => {
 
   return (
     <div className={Styles.inputWrap}>
-      <input {...props} />
+      <input data-testid={props.name} {...props} onChange={handleOnChange} />
       <span
         data-testid={`${props.name}-status`}
         title={getTitle()}
