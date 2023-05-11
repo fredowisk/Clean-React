@@ -18,6 +18,7 @@ type Props = {
 const Login: React.FC<Props> = ({ validation }: Props) => {
   const [isLoading] = useState(false)
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [errorMessage] = useState('')
   const [emailError] = useState('Campo obrigatório')
   const [passwordError] = useState('Campo obrigatório')
@@ -26,11 +27,22 @@ const Login: React.FC<Props> = ({ validation }: Props) => {
     validation.validate({ email })
   }, [email])
 
+  useEffect(() => {
+    validation.validate({ password })
+  }, [password])
+
   return (
     <div className={Styles.login}>
       <LoginHeader />
       <Context.Provider
-        value={{ isLoading, errorMessage, emailError, passwordError, setEmail }}
+        value={{
+          isLoading,
+          errorMessage,
+          emailError,
+          passwordError,
+          setEmail,
+          setPassword
+        }}
       >
         <form className={Styles.form}>
           <h2>Login</h2>

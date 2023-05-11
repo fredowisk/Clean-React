@@ -15,7 +15,8 @@ const Input: React.FC<Props> = (props: Props) => {
   const state = useContext(Context)
 
   const setState = {
-    email: state.setEmail
+    email: state.setEmail,
+    password: state.setPassword
   }
 
   const handleOnChange = (event: React.FocusEvent<HTMLInputElement>): void => {
