@@ -1,10 +1,23 @@
 import React from 'react'
-import { render } from '@testing-library/react'
+import { RenderResult, render } from '@testing-library/react'
 import Login from './login'
+
+type SutTypes = {
+  sut: RenderResult
+}
+
+const makeSut = (): SutTypes => {
+  const sut = render(<Login />)
+
+  return {
+    sut
+  }
+}
 
 describe('Login page', () => {
   test('should not render spinner and error on start', () => {
-    const { getByTestId } = render(<Login />)
+    const { sut: { getByTestId } } = makeSut()
+
     const errorWrap = getByTestId('error-wrap')
     const submitButton = getByTestId('submit') as HTMLButtonElement
     const emailStatus = getByTestId('email-status')
