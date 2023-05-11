@@ -29,7 +29,7 @@ const Login: React.FC = () => {
           />
           <Input />
 
-          <button className={Styles.submit} type="submit">
+          <button data-testid="submit" disabled className={Styles.submit} type="submit">
             Entrar
           </button>
           <span className={Styles.link}>Criar conta</span>
