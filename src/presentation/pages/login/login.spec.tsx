@@ -6,6 +6,9 @@ describe('Login page', () => {
   test('should not render spinner and error on start', () => {
     const { getByTestId } = render(<Login />)
     const errorWrap = getByTestId('error-wrap')
+    const submitButton = getByTestId('submit') as HTMLButtonElement
+
     expect(errorWrap.childElementCount).toBe(0)
+    expect(submitButton.disabled).toBe(true)
   })
 })
