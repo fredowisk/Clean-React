@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 
 import Styles from './login-styles.scss'
 
@@ -16,7 +16,7 @@ type Props = {
 }
 
 const Login: React.FC<Props> = ({ validation }: Props) => {
-  const [isLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errorMessage] = useState('')
@@ -27,6 +27,12 @@ const Login: React.FC<Props> = ({ validation }: Props) => {
     setEmailError(validation.validate('email', email))
     setPasswordError(validation.validate('password', password))
   }, [email, password])
+
+  const handleOnSubmit = (event: FormEvent): void => {
+    event.preventDefault()
+
+    setIsLoading(true)
+  }
 
   return (
     <div className={Styles.login}>
@@ -41,7 +47,7 @@ const Login: React.FC<Props> = ({ validation }: Props) => {
           setPassword
         }}
       >
-        <form className={Styles.form}>
+        <form className={Styles.form} onSubmit={handleOnSubmit}>
           <h2>Login</h2>
 
           <Input type="email" name="email" placeholder="Digite seu e-mail" />
