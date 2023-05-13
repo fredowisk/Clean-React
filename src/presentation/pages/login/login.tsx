@@ -33,6 +33,10 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
   const handleOnSubmit = async (event: FormEvent): Promise<void> => {
     event.preventDefault()
 
+    if (isLoading) {
+      return
+    }
+
     setIsLoading(true)
     authentication.auth({ email, password })
   }
