@@ -21,7 +21,7 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [errorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
 
@@ -31,14 +31,19 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
   }, [email, password])
 
   const handleOnSubmit = async (event: FormEvent): Promise<void> => {
-    event.preventDefault()
+    try {
+      event.preventDefault()
 
-    if (isLoading || emailError || passwordError) {
-      return
+      if (isLoading || emailError || passwordError) {
+        return
+      }
+
+      setIsLoading(true)
+      await authentication.auth({ email, password })
+    } catch (error) {
+      setIsLoading(false)
+      setErrorMessage(error.message)
     }
-
-    setIsLoading(true)
-    authentication.auth({ email, password })
   }
 
   return (
@@ -54,7 +59,11 @@ const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
           setPassword
         }}
       >
-        <form data-testid="form" className={Styles.form} onSubmit={handleOnSubmit}>
+        <form
+          data-testid="form"
+          className={Styles.form}
+          onSubmit={handleOnSubmit}
+        >
           <h2>Login</h2>
 
           <Input type="email" name="email" placeholder="Digite seu e-mail" />
