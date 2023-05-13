@@ -44,15 +44,16 @@ const makeSut = (params?: SutParams): SutTypes => {
   }
 }
 
-const simulateValidSubmit = (
+const simulateValidSubmit = async (
   sut: RenderResult,
   email = faker.internet.email(),
   password = faker.internet.password()
-): void => {
+): Promise<void> => {
   populateEmailField(sut, email)
   populatePasswordField(sut, password)
-  const submitButton = sut.getByTestId('submit') as HTMLButtonElement
-  fireEvent.click(submitButton)
+  const form = sut.getByTestId('form')
+  fireEvent.submit(form)
+  await waitFor(() => form)
 }
 
 const populateEmailField = (
@@ -75,13 +76,51 @@ const populatePasswordField = (
 }
 
 const testStatusForField = (
-  sut: RenderResult,
+  { getByTestId }: RenderResult,
   fieldName: string,
   validationError?: string
 ): void => {
-  const fieldStatus = sut.getByTestId(`${fieldName}-status`)
+  const fieldStatus = getByTestId(`${fieldName}-status`)
   expect(fieldStatus.title).toBe(validationError || 'Tudo certo!')
   expect(fieldStatus.textContent).toBe(validationError ? '🔴' : '🟢')
+}
+
+const testErrorWrapChildCount = (
+  { getByTestId }: RenderResult,
+  count: number
+): void => {
+  const errorWrap = getByTestId('error-wrap')
+  expect(errorWrap.childElementCount).toBe(count)
+}
+
+const testIfElementExists = (
+  { getByTestId }: RenderResult,
+  fieldName: string
+): void => {
+  const element = getByTestId(fieldName)
+  expect(element).toBeTruthy()
+}
+
+const testElementTextContent = (
+  { getByTestId }: RenderResult,
+  fieldName: string,
+  textContent: string
+): void => {
+  const element = getByTestId(fieldName)
+  expect(element.textContent).toBe(textContent)
+}
+
+const testIfButtonIsDisabled = (
+  { getByTestId }: RenderResult,
+  isDisabled: boolean
+): void => {
+  const button = getByTestId('submit') as HTMLButtonElement
+  expect(button.disabled).toBe(isDisabled)
+}
+
+const testHistoryContext = (length: number, pathname: string): void => {
+  expect(history.length).toBe(length)
+  expect(history.location.pathname).toBe(pathname)
 }
 
 describe('Login page', () => {
@@ -95,11 +134,8 @@ describe('Login page', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut({ validationError })
 
-    const errorWrap = sut.getByTestId('error-wrap')
-    const submitButton = sut.getByTestId('submit') as HTMLButtonElement
-
-    expect(errorWrap.childElementCount).toBe(0)
-    expect(submitButton.disabled).toBe(true)
+    testIfButtonIsDisabled(sut, true)
+    testErrorWrapChildCount(sut, 0)
     testStatusForField(sut, 'email', validationError)
     testStatusForField(sut, 'password', validationError)
   })
@@ -142,44 +178,43 @@ describe('Login page', () => {
     const { sut } = makeSut()
     populateEmailField(sut)
     populatePasswordField(sut)
-    const submitButton = sut.getByTestId('submit') as HTMLButtonElement
-    expect(submitButton.disabled).toBe(false)
+    testIfButtonIsDisabled(sut, false)
   })
 
-  test('should show spinner on submit', () => {
+  test('should show spinner on submit', async () => {
     const { sut } = makeSut()
-    simulateValidSubmit(sut)
-    const spinner = sut.getByTestId('spinner')
-    expect(spinner).toBeTruthy()
+    await simulateValidSubmit(sut)
+    testIfElementExists(sut, 'spinner')
   })
 
-  test('should call Authentication with correct values', () => {
+  test('should call Authentication with correct values', async () => {
     const { sut, authenticationSpy } = makeSut()
     const email = faker.internet.email()
     const password = faker.internet.password()
-    simulateValidSubmit(sut, email, password)
+    await simulateValidSubmit(sut, email, password)
+
     expect(authenticationSpy.params).toEqual({
       email,
       password
     })
   })
 
-  test('should call Authentication only once', () => {
+  test('should call Authentication only once', async () => {
     const { sut, authenticationSpy } = makeSut()
 
-    simulateValidSubmit(sut)
-    simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
+
     expect(authenticationSpy.callsCount).toBe(1)
   })
 
-  test('should not call Authentication if form is invalid', () => {
+  test('should not call Authentication if form is invalid', async () => {
     const validationError = faker.random.words()
-    const { sut, authenticationSpy } = makeSut({ validationError })
+    const { sut } = makeSut({ validationError })
 
-    populateEmailField(sut)
-    fireEvent.submit(sut.getByTestId('form'))
+    await simulateValidSubmit(sut)
 
-    expect(authenticationSpy.callsCount).toBe(0)
+    testErrorWrapChildCount(sut, 0)
   })
 
   test('should present error if Authentication fails', async () => {
@@ -187,30 +222,22 @@ describe('Login page', () => {
     const error = new InvalidCredentialsError()
     jest.spyOn(authenticationSpy, 'auth').mockRejectedValueOnce(error)
 
-    simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
 
-    const errorWrap = sut.getByTestId('error-wrap')
-    await waitFor(() => errorWrap)
-
-    const mainError = sut.getByTestId('main-error')
-
-    expect(mainError.textContent).toBe(error.message)
-    expect(errorWrap.childElementCount).toBe(1)
+    testElementTextContent(sut, 'main-error', error.message)
+    testErrorWrapChildCount(sut, 1)
   })
 
   test('should add accessToken to localStorage on success', async () => {
     const { sut, authenticationSpy } = makeSut()
 
-    simulateValidSubmit(sut)
-
-    await waitFor(() => sut.getByTestId('form'))
+    await simulateValidSubmit(sut)
 
     expect(localStorage.setItem).toHaveBeenCalledWith(
       'accessToken',
       authenticationSpy.account.accessToken
     )
-    expect(history.length).toBe(1)
-    expect(history.location.pathname).toBe('/')
+    testHistoryContext(1, '/')
   })
 
   test('should go to signup page', () => {
@@ -218,7 +245,7 @@ describe('Login page', () => {
 
     const register = sut.getByTestId('register')
     fireEvent.click(register)
-    expect(history.length).toBe(2)
-    expect(history.location.pathname).toBe('/signup')
+
+    testHistoryContext(2, '/signup')
   })
 })
