@@ -1,4 +1,4 @@
-import { SetStorageSpy } from '@/data/test/mock-storage'
+import { SetStorageSpy } from '@/data/test'
 import { LocalSaveAccessToken } from './local-save-access-token'
 
 import faker from 'faker'
