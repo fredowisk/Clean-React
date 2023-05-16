@@ -3,7 +3,7 @@ import { AxiosHttpClient } from './axios-http-client'
 import { AuthenticationParams } from '@/domain/usecases'
 import { AccountModel } from '@/domain/models'
 
-import { mockAxios } from '@/infra/test'
+import { mockAxios, mockHttpResponse } from '@/infra/test'
 
 import { mockPostRequest } from '@/data/test'
 
@@ -35,6 +35,9 @@ describe('Axios Http Client', () => {
 
   test('should return the correct statusCode and body', () => {
     const { sut, mockedAxios } = makeSut()
+    mockedAxios.post.mockRejectedValueOnce({
+      response: mockHttpResponse()
+    })
 
     const promise = sut.post(mockPostRequest())
 
