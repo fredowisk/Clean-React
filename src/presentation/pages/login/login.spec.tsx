@@ -8,18 +8,22 @@ import {
   render,
   waitFor
 } from '@testing-library/react'
+
 import faker from 'faker'
-import 'jest-localstorage-mock'
 
 import { Login } from '@/presentation/pages'
-
-import { ValidationStub, AuthenticationSpy } from '@/presentation/test'
+import {
+  ValidationStub,
+  AuthenticationSpy,
+  SaveAccessTokenSpy
+} from '@/presentation/test'
 
 import { InvalidCredentialsError } from '@/domain/errors'
 
 type SutTypes = {
   sut: RenderResult
   authenticationSpy: AuthenticationSpy
+  saveAccessTokenSpy: SaveAccessTokenSpy
 }
 
 type SutParams = {
@@ -31,16 +35,22 @@ const history = createMemoryHistory({ initialEntries: ['/login'] })
 const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
   const authenticationSpy = new AuthenticationSpy()
+  const saveAccessTokenSpy = new SaveAccessTokenSpy()
   validationStub.errorMessage = params?.validationError
   const sut = render(
     <Router history={history}>
-      <Login validation={validationStub} authentication={authenticationSpy} />
+      <Login
+        validation={validationStub}
+        authentication={authenticationSpy}
+        saveAccessToken={saveAccessTokenSpy}
+      />
     </Router>
   )
 
   return {
     sut,
-    authenticationSpy
+    authenticationSpy,
+    saveAccessTokenSpy
   }
 }
 
@@ -125,10 +135,6 @@ const testHistoryContext = (length: number, pathname: string): void => {
 
 describe('Login page', () => {
   afterEach(cleanup)
-
-  beforeEach(() => {
-    localStorage.clear()
-  })
 
   test('should start with initial state', () => {
     const validationError = faker.random.words()
@@ -228,13 +234,12 @@ describe('Login page', () => {
     testErrorWrapChildCount(sut, 1)
   })
 
-  test('should add accessToken to localStorage on success', async () => {
-    const { sut, authenticationSpy } = makeSut()
+  test('should call SaveAccessToken on success', async () => {
+    const { sut, authenticationSpy, saveAccessTokenSpy } = makeSut()
 
     await simulateValidSubmit(sut)
 
-    expect(localStorage.setItem).toHaveBeenCalledWith(
-      'accessToken',
+    expect(saveAccessTokenSpy.accessToken).toBe(
       authenticationSpy.account.accessToken
     )
     testHistoryContext(1, '/')
