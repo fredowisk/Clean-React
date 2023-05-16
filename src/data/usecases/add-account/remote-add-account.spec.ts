@@ -12,7 +12,7 @@ type SutTypes = {
   httpPostClientSpy: HttpPostClientSpy<AddAccountParams, AccountModel>
 }
 
-const makeSut = (url: string = fakerStatic.internet.url()): SutTypes => {
+const makeSut = (url: string = faker.internet.url()): SutTypes => {
   const httpPostClientSpy = new HttpPostClientSpy<
   AddAccountParams,
   AccountModel
@@ -31,5 +31,12 @@ describe('Name of the group', () => {
     const { sut, httpPostClientSpy } = makeSut(url)
     await sut.add(mockAddAccountParams())
     expect(httpPostClientSpy.url).toBe(url)
+  })
+
+  test('should call HttpPostClient with correct body', async () => {
+    const { sut, httpPostClientSpy } = makeSut()
+    const addAccountParams = mockAddAccountParams()
+    await sut.add(addAccountParams)
+    expect(httpPostClientSpy.body).toEqual(addAccountParams)
   })
 })
