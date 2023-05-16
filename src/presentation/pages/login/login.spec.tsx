@@ -11,7 +11,7 @@ import {
 import faker from 'faker'
 import 'jest-localstorage-mock'
 
-import Login from './login'
+import { Login } from '@/presentation/pages'
 
 import { ValidationStub, AuthenticationSpy } from '@/presentation/test'
 
