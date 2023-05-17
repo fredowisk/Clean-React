@@ -45,7 +45,7 @@ describe('Login', () => {
     cy.getByTestId('error-wrap').should('not.have.descendants')
   })
 
-  it('should present error if invalid credentials are provided', () => {
+  it('should present InvalidCredentialsError on 401', () => {
     cy.route({
       method: 'POST',
       url: /login/,
@@ -67,6 +67,50 @@ describe('Login', () => {
     cy.url().should('eq', `${baseUrl}/login`)
   })
 
+  it('should present UnexpectedError on 400', () => {
+    cy.route({
+      method: 'POST',
+      url: /login/,
+      status: 400,
+      response: {
+        error: faker.random.words()
+      }
+    })
+
+    cy.getByTestId('email').focus().type(faker.internet.email())
+    cy.getByTestId('password').focus().type(faker.internet.password())
+    cy.getByTestId('submit').click()
+    cy.getByTestId('spinner').should('not.exist')
+    cy.getByTestId('main-error').should(
+      'contain.text',
+      'Algo de errado aconteceu. Tente novamente.'
+    )
+
+    cy.url().should('eq', `${baseUrl}/login`)
+  })
+
+  it('should present UnexpectedError on 400 if invalid data is returned', () => {
+    cy.route({
+      method: 'POST',
+      url: /login/,
+      status: 200,
+      response: {
+        invalidProperty: faker.random.uuid()
+      }
+    })
+
+    cy.getByTestId('email').focus().type(faker.internet.email())
+    cy.getByTestId('password').focus().type(faker.internet.password())
+    cy.getByTestId('submit').click()
+    cy.getByTestId('spinner').should('not.exist')
+    cy.getByTestId('main-error').should(
+      'contain.text',
+      'Algo de errado aconteceu. Tente novamente.'
+    )
+
+    cy.url().should('eq', `${baseUrl}/login`)
+  })
+
   it('should present save accessToken if valid credentials are provided', () => {
     cy.route({
       method: 'POST',
@@ -77,8 +121,8 @@ describe('Login', () => {
       }
     })
 
-    cy.getByTestId('email').focus().type('mango@gmail.com')
-    cy.getByTestId('password').focus().type('12345')
+    cy.getByTestId('email').focus().type(faker.internet.email())
+    cy.getByTestId('password').focus().type(faker.internet.password())
     cy.getByTestId('submit').click()
     cy.getByTestId('error-wrap')
     cy.getByTestId('main-error').should('not.exist')
