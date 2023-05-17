@@ -134,7 +134,7 @@ describe('Login', () => {
     )
   })
 
-  it('should prevent multiple submits', () => {
+  it('should not call submit if form is invalid', () => {
     cy.route({
       method: 'POST',
       url: /login/,
@@ -144,9 +144,10 @@ describe('Login', () => {
       }
     }).as('request')
 
-    cy.getByTestId('email').focus().type(faker.internet.email())
-    cy.getByTestId('password').focus().type(faker.internet.password())
-    cy.getByTestId('submit').dblclick()
-    cy.get('@request.all').should('have.length', 1)
+    cy.getByTestId('email')
+      .focus()
+      .type(faker.internet.email())
+      .type('{enter}')
+    cy.get('@request.all').should('have.length', 0)
   })
 })
