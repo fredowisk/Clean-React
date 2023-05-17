@@ -17,8 +17,10 @@ const Input: React.FC<Props> = (props: Props) => {
   const error = state[`${props.name}Error`]
 
   const setState = {
+    name: state.setName,
     email: state.setEmail,
-    password: state.setPassword
+    password: state.setPassword,
+    passwordConfirmation: state.setPasswordConfirmation
   }
 
   const handleOnChange = (event: React.FocusEvent<HTMLInputElement>): void => {

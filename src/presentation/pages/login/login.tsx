@@ -8,7 +8,8 @@ import {
   LoginHeader,
   Footer,
   Input,
-  FormStatus
+  FormStatus,
+  SubmitButton
 } from '@/presentation/components'
 import Context from '@/presentation/contexts/form/form-context'
 import { Validation } from '@/presentation/protocols/validation'
@@ -20,7 +21,11 @@ type Props = {
   saveAccessToken: SaveAccessToken
 }
 
-const Login: React.FC<Props> = ({ validation, authentication, saveAccessToken }: Props) => {
+const Login: React.FC<Props> = ({
+  validation,
+  authentication,
+  saveAccessToken
+}: Props) => {
   const history = useHistory()
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
@@ -80,14 +85,7 @@ const Login: React.FC<Props> = ({ validation, authentication, saveAccessToken }:
             placeholder="Digite sua senha"
           />
 
-          <button
-            data-testid="submit"
-            disabled={!!emailError || !!passwordError}
-            className={Styles.submit}
-            type="submit"
-          >
-            Entrar
-          </button>
+          <SubmitButton text="Entrar" />
           <Link data-testid="register" to="/signup" className={Styles.link}>
             Criar conta
           </Link>
